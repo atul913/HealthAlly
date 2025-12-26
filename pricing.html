@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pricing - AI Health Assistant</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* --- Page Hero with Gradient Fade --- */
+        .page-hero {
+            padding: 8rem 2rem 6rem;
+            /* Increased bottom padding */
+            background: var(--hero-bg);
+            color: white;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* This pseudo-element creates the smooth fade to white */
+        .page-hero::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 150px;
+            /* Height of the fade */
+            background: linear-gradient(to bottom, transparent, var(--bg-body));
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .page-hero h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .page-hero p {
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin: 0 auto;
+            opacity: 0.9;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* --- Pricing Section --- */
+        .pricing-section {
+            padding: 2rem 2rem 8rem;
+            margin-top: -80px;
+            /* Pull up to overlap hero */
+            position: relative;
+            z-index: 10;
+        }
+
+        .pricing-container {
+            max-width: 900px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+            align-items: flex-start;
+        }
+
+        .pricing-card {
+            font-family: 'Poppins', sans-serif;
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            min-height: 550px;
+        }
+
+        .pricing-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        /* Free Tier Highlight */
+        .pricing-card.highlight {
+            border: 2px solid var(--accent-primary);
+            box-shadow: 0 20px 40px rgba(37, 99, 235, 0.1);
+        }
+
+        .plan-header {
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 2rem;
+        }
+
+        .plan-top-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .plan-name {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .popular-badge {
+            background: var(--accent-light);
+            color: var(--accent-primary);
+            padding: 4px 12px;
+            border-radius: 999px;
+            font-size: 0.65rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .plan-price {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            line-height: 1;
+            display: flex;
+            align-items: baseline;
+        }
+
+        .plan-price span {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+            margin-left: 6px;
+        }
+
+        .features-list {
+            list-style: none;
+            flex-grow: 1;
+        }
+
+        .features-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 0.8rem;
+            color: var(--text-primary);
+            font-size: 0.90rem;
+        }
+
+        .check-icon {
+            color: var(--success);
+            flex-shrink: 0;
+            margin-top: 3px;
+        }
+
+        .check-icon svg {
+            width: 18px;
+            height: 18px;
+            stroke-width: 2.5;
+        }
+
+        /* Buttons */
+        .card-btn {
+            font-family: 'Poppins', sans-serif;
+            width: 100%;
+            padding: 0.95rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            text-align: center;
+        }
+
+        .btn-active {
+            background: var(--accent-primary);
+            color: white;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+        }
+
+        .btn-active:hover {
+            background: #1d4ed8;
+            transform: translateY(-2px);
+        }
+
+        .btn-disabled {
+            background: #f1f5f9;
+            color: #94a3b8;
+            cursor: not-allowed;
+            display: inline-block;
+        }
+
+        [data-theme="dark"] .btn-disabled {
+            background: #334155;
+            color: #64748b;
+        }
+
+        .coming-soon-text {
+            display: block;
+            text-align: center;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-top: 1rem;
+        }
+
+        .free-text {
+            display: block;
+            text-align: center;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-top: 2rem;
+        }
+
+
+        /* Footer & Utils */
+        footer {
+            background: var(--bg-body);
+            padding: 3rem 2rem 1.5rem;
+            border-top: 1px solid var(--border-color);
+            color: var(--text-primary);
+            margin-top: auto;
+        }
+
+        .footer-content {
+            max-width: 1280px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 3rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-section h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .footer-section p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.75rem;
+        }
+
+        .footer-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--accent-primary);
+        }
+
+        .footer-bottom {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border-color);
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+
+        .lang-selector {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .lang-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 0.6rem 1rem;
+            border-radius: 999px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        header.scrolled .lang-btn {
+            background: var(--bg-body);
+            color: var(--text-primary);
+            border-color: var(--border-color);
+        }
+
+        .lang-dropdown {
+            position: absolute;
+            top: 120%;
+            right: 0;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 0.5rem;
+            display: none;
+            box-shadow: var(--shadow);
+            min-width: 120px;
+        }
+
+        .lang-dropdown.active {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+
+        .lang-option {
+            padding: 0.6rem 1rem;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            font-size: 0.9rem;
+            color: var(--text-primary);
+        }
+
+        .lang-option:hover {
+            background: var(--border-color);
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 968px) {
+            .pricing-container {
+                grid-template-columns: 1fr;
+                max-width: 450px;
+            }
+
+            .pricing-section {
+                padding-top: 2rem;
+                margin-top: 0;
+            }
+
+            .page-hero {
+                padding-bottom: 2rem;
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <nav>
+            <div class="logo">
+                <div class="logo-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
+                    </svg>
+                </div>
+                <span>HealthAlly</span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html" id="navHome">Home</a></li>
+                <li><a href="services.html" id="navServices">Services</a></li>
+                <li><a href="#" style="font-weight:bold;" id="navPricing">Pricing</a></li>
+                <li><a href="#" id="navDocs">Documentation</a></li>
+            </ul>
+            <div style="display: flex; gap: 1rem; align-items: center;">
+                <div class="lang-selector">
+                    <button class="lang-btn" onclick="toggleLangDropdown()">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <circle cx="12" cy="12" r="10" />
+                            <line x1="2" y1="12" x2="22" y2="12" />
+                            <path
+                                d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+                        </svg>
+                        <span id="currentLang">EN</span>
+                    </button>
+                    <div class="lang-dropdown" id="langDropdown">
+                        <div class="lang-option" onclick="changeLang('en')">English</div>
+                        <div class="lang-option" onclick="changeLang('hi')">हिंदी</div>
+                    </div>
+                </div>
+
+                <button class="icon-btn" onclick="toggleTheme()" title="Toggle theme">
+                    <i id="themeIcon" class="fas fa-sun"></i>
+                </button>
+
+                <button class="btn btn-primary" id="loginBtn" onclick="window.location.href='login.html'">Login</button>
+            </div>
+            <button class="mobile-menu-btn">☰</button>
+            <div class="mobile-menu" id="mobileMenu">
+                <a href="index.html" class="mobile-link">Home</a>
+                <a href="services.html" class="mobile-link">Services</a>
+                <a href="#" class="mobile-link">Pricing</a>
+                <a href="#docs" class="mobile-link">Documentation</a>
+            </div>
+        </nav>
+    </header>
+
+    <section class="page-hero">
+        <h1 id="pricingHeroTitle">Simple, Transparent Pricing</h1>
+        <p id="pricingHeroSubtitle">Flexible options for individuals and families.<br>Start for free, upgrade when you
+            need more.</p>
+    </section>
+
+    <section class="pricing-section">
+        <div class="pricing-container">
+            <div class="pricing-card highlight">
+                <div class="plan-header">
+                    <div class="plan-top-row">
+                        <div class="plan-name" id="pricingFreeName">Free Tier</div>
+                        <span class="popular-badge" id="pricingPopularBadge">POPULAR</span>
+                    </div>
+                    <div class="plan-price">
+                        <span id="pricingFreePrice">$0</span><span id="pricingFreeMonth">/ month</span>
+                    </div>
+                </div>
+
+                <ul class="features-list">
+                    <li>
+                        <span class="check-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path d="M20 6L9 17l-5-5" />
+                            </svg></span>
+                        <span id="pricingF1"><b>500</b> AI Chat Queries / mo</span>
+                    </li>
+                    <li>
+                        <span class="check-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path d="M20 6L9 17l-5-5" />
+                            </svg></span>
+                        <span id="pricingF2">Access to standard <b>ML Diagnosis</b></span>
+                    </li>
+                    <li>
+                        <span class="check-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path d="M20 6L9 17l-5-5" />
+                            </svg></span>
+                        <span id="pricingF3">Find Doctors Nearby</span>
+                    </li>
+                    <li>
+                        <span class="check-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path d="M20 6L9 17l-5-5" />
+                            </svg></span>
+                        <span id="pricingF4">Export to <b>PDF Summary</b></span>
+                    </li>
+                    <li>
+                        <span class="check-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path d="M20 6L9 17l-5-5" />
+                            </svg></span>
+                        <span id="pricingF5">Standard Community Support</span>
+                    </li>
+                </ul>
+
+                <button class="card-btn btn-active" id="pricingBtnFree">Start for Free</button>
+            </div>
+
+            <div class="pricing-card">
+                <div class="plan-header">
+                    <div class="plan-top-row">
+                        <div class="plan-name" id="pricingProName">Pro Tier</div>
+                    </div>
+                    <div class="plan-price">
+                        <span id="pricingProPrice">$29</span><span id="pricingProMonth">/ month</span>
+                    </div>
+                </div>
+
+                <ul class="features-list">
+                    <li>
+                        <span class="check-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path d="M20 6L9 17l-5-5" />
+                            </svg></span><span id="pricingP1"><b>Unlimited</b> Queries</span>
+                    </li>
+                    <li>
+                        <span class="check-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path d="M20 6L9 17l-5-5" />
+                            </svg></span><span id="pricingP2"><b>Priority</b> Processing Queue</span>
+                    </li>
+                    <li>
+                        <span class="check-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path d="M20 6L9 17l-5-5" />
+                            </svg></span><span id="pricingP3">Advanced <b>Lab Report Analysis</b></span>
+                    </li>
+                    <li>
+                        <span class="check-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path d="M20 6L9 17l-5-5" />
+                            </svg></span><span id="pricingP4">Family Account Management</span>
+                    </li>
+                    <li>
+                        <span class="check-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path d="M20 6L9 17l-5-5" />
+                            </svg></span><span id="pricingP5">24/7 Dedicated Support</span>
+                    </li>
+                </ul>
+
+                <button class="card-btn btn-disabled" id="pricingBtnPro" disabled>Coming Soon</button>
+                <span class="coming-soon-text" id="pricingProFooter">This plan will be available soon. Stay
+                    tuned!</span>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4 id="footerBrand">HealthAlly</h4>
+                <p id="footerDescription">Revolutionizing healthcare with artificial intelligence. Your trusted partner
+                    for medical guidance, diagnosis, and wellness management.</p>
+            </div>
+            <div class="footer-section">
+                <h4 id="footerProductHeading">Product</h4>
+                <ul class="footer-links">
+                    <li><a href="index.html#features" id="footerLinkFeatures">Features</a></li>
+                    <li><a href="#" id="footerLinkPricing">Pricing</a></li>
+                    <li><a href="#" id="footerLinkAPI">API</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4 id="footerCompanyHeading">Company</h4>
+                <ul class="footer-links">
+                    <li><a href="#" id="footerLinkAbout">About Us</a></li>
+                    <li><a href="#" id="footerLinkCareers">Careers</a></li>
+                    <li><a href="#" id="footerLinkBlog">Blog</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4 id="footerLegalHeading">Legal</h4>
+                <ul class="footer-links">
+                    <li><a href="#" id="footerLinkPrivacy">Privacy</a></li>
+                    <li><a href="#" id="footerLinkTerms">Terms</a></li>
+                    <li><a href="#" id="footerLinkSecurity">Security</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p id="footerCopyright">© 2024 HealthAlly. All rights reserved.</p>
+        </div>
+    </footer>
+
+
+    <script src="script.js"></script>
+</body>
+
+</html>

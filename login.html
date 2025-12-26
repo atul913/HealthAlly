@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Health Assistant - Secure Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+        :root {
+            /* Theme Palette */
+            --bg-body: #ffffff;
+            --hero-bg: linear-gradient(135deg, #3b82f6 0%, #2563eb 50%, #1d4ed8 100%);
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --text-on-blue: #ffffff;
+            --accent-primary: #2563eb;
+            --accent-glow: rgba(59, 130, 246, 0.5);
+            --card-bg: #ffffff;
+            --border-color: #e2e8f0;
+            --shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+            --shadow-hover: 0 20px 60px rgba(0, 0, 0, 0.12);
+
+            /* Helpers */
+            --danger: #ef4444;
+            --input-bg: #f8fafc;
+        }
+
+        [data-theme="dark"] {
+            --bg-body: #0f172a;
+            --hero-bg: linear-gradient(135deg, #1e3a8a 0%, #172554 100%);
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --text-on-blue: #e2e8f0;
+            --accent-primary: #3b82f6;
+            --card-bg: #1e293b;
+            --border-color: #334155;
+            --shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            --shadow-hover: 0 20px 60px rgba(0, 0, 0, 0.7);
+            --input-bg: #0f172a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+            transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+        }
+
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: grid;
+            grid-template-columns: 45% 55%;
+            /* Split Screen Layout */
+            overflow-x: hidden;
+        }
+
+        /* --- GLOBAL CONTROLS (Back & Theme) --- */
+        .global-back-btn {
+            position: fixed;
+            top: 24px;
+            left: 24px;
+            z-index: 100;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            /* Always white because it's usually over the blue hero on desktop */
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .global-back-btn:hover {
+            transform: scale(1.1);
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        .theme-toggle {
+            position: absolute;
+            top: 24px;
+            right: 24px;
+            background: var(--input-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            z-index: 50;
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1);
+            border-color: var(--accent-primary);
+        }
+
+        /* --- LEFT SIDE: HERO --- */
+        .hero-section {
+            background: var(--hero-bg);
+            padding: 4rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            overflow: hidden;
+            color: var(--text-on-blue);
+        }
+
+        /* Background Circles */
+        .hero-bg-circle {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            z-index: 0;
+        }
+
+        .circle-1 {
+            width: 400px;
+            height: 400px;
+            top: -100px;
+            right: -100px;
+        }
+
+        .circle-2 {
+            width: 200px;
+            height: 200px;
+            bottom: 50px;
+            left: -50px;
+        }
+
+        .brand-logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-content {
+            font-family: 'Poppins', sans-serif;
+            position: relative;
+            z-index: 2;
+            max-width: 450px;
+        }
+
+        .hero-title {
+            font-size: 3.5rem;
+            line-height: 1.1;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero-text {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            line-height: 1.6;
+        }
+
+        .hero-footer {
+            position: relative;
+            z-index: 2;
+            font-size: 0.85rem;
+            opacity: 0.7;
+        }
+
+        /* --- RIGHT SIDE: FORM --- */
+        .form-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            position: relative;
+            background-color: var(--bg-body);
+        }
+
+        .auth-container {
+            width: 100%;
+            max-width: 420px;
+            padding: 10px;
+        }
+
+        /* Headers */
+        .auth-header {
+            margin-bottom: 2rem;
+        }
+
+        .auth-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .auth-subtitle {
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+
+        /* Links */
+        .link-text {
+            color: var(--accent-primary);
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .link-text:hover {
+            text-decoration: underline;
+        }
+
+        /* Inputs */
+        .input-group {
+            margin-bottom: 1.25rem;
+            position: relative;
+        }
+
+        .auth-input {
+            width: 100%;
+            padding: 14px 20px;
+            background: var(--input-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 16px;
+            font-size: 0.95rem;
+            color: var(--text-primary);
+            outline: none;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .auth-input:focus {
+            border-color: var(--accent-primary);
+            background: var(--bg-body);
+            box-shadow: 0 0 0 4px var(--accent-glow), var(--shadow);
+            transform: translateY(-1px);
+        }
+
+        .auth-input.error {
+            border-color: var(--danger);
+            background: rgba(244, 33, 46, 0.03);
+        }
+
+        .error-msg {
+            color: var(--danger);
+            font-size: 0.85rem;
+            margin-top: 6px;
+            display: none;
+            padding-left: 4px;
+            font-weight: 500;
+        }
+
+        .error-msg.show {
+            display: block;
+        }
+
+        /* Buttons */
+        .auth-btn-primary {
+            width: 100%;
+            padding: 16px;
+            background: var(--accent-primary);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-top: 10px;
+        }
+
+        .auth-btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px var(--accent-glow);
+        }
+
+        .social-btn {
+            width: 100%;
+            padding: 14px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            color: var(--text-secondary);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 10px;
+        }
+
+        .social-btn:hover {
+            background: var(--input-bg);
+            color: var(--text-primary);
+            border-color: var(--text-secondary);
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            margin: 2rem 0;
+            gap: 1rem;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background: var(--border-color);
+        }
+
+        /* Internal Back Button (for steps) */
+        .step-back-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1rem;
+            cursor: pointer;
+            margin-bottom: 2rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 0;
+        }
+
+        .step-back-btn:hover {
+            color: var(--accent-primary);
+        }
+
+        /* View Animations */
+        .view-section {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .view-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            body {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-section {
+                padding: 2rem;
+                min-height: 250px;
+                text-align: center;
+                align-items: center;
+            }
+
+            .hero-title {
+                font-size: 2rem;
+            }
+
+            .hero-text,
+            .hero-footer,
+            .hero-bg-circle {
+                display: none;
+            }
+
+            .brand-logo {
+                margin-bottom: 0;
+            }
+
+            /* On mobile, global back btn needs to be visible against blue or white */
+            .global-back-btn {
+                top: 20px;
+                left: 20px;
+                background: rgba(255, 255, 255, 0.2);
+            }
+
+            .form-section {
+                border-radius: 24px 24px 0 0;
+                margin-top: -24px;
+                /* Overlap hero */
+                min-height: calc(100vh - 226px);
+                align-items: flex-start;
+                padding-top: 3rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <a onclick="history.back()" class="global-back-btn" title="Go Back">
+        <i class="fas fa-arrow-left"></i>
+    </a>
+
+    <div class="hero-section">
+        <div class="hero-bg-circle circle-1"></div>
+        <div class="hero-bg-circle circle-2"></div>
+
+        <div class="brand-logo">
+            <i class="fas fa-heart-pulse"></i> MedAI Assist
+        </div>
+
+        <div class="hero-content">
+            <h1 class="hero-title">Your Health,<br>Intelligently Managed.</h1>
+            <p class="hero-text">Experience the future of personal healthcare. Secure AI analysis, instant reports, and
+                24/7 monitoring.</p>
+        </div>
+
+        <div class="hero-footer">
+            &copy; 2025 MedAI Health Systems. HIPAA Compliant.
+        </div>
+    </div>
+
+    <div class="form-section">
+        <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Dark Mode">
+            <i class="fas fa-moon"></i>
+        </button>
+
+        <div class="auth-container">
+
+            <div id="view-login" class="view-section active">
+                <div class="auth-header">
+                    <h2 class="auth-title">Welcome Back</h2>
+                    <p class="auth-subtitle">Please enter your details to sign in.</p>
+                </div>
+
+                <form onsubmit="handleLogin(event)">
+                    <div class="input-group">
+                        <input type="text" class="auth-input" id="loginId" placeholder="Email or Medical ID">
+                        <span class="error-msg" id="loginIdError">Please enter your ID</span>
+                    </div>
+
+                    <div class="input-group">
+                        <input type="password" class="auth-input" id="loginPass" placeholder="Password">
+                        <span class="error-msg" id="loginPassError">Password is required</span>
+                        <div style="text-align: right; margin-top: 10px;">
+                            <a href="javascript:void(0)" onclick="switchView('forgot')"
+                                style="font-size: 0.85rem; color: var(--text-secondary); text-decoration: none;">Forgot
+                                Password?</a>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="auth-btn-primary">Sign In</button>
+                </form>
+
+                <div class="divider">or continue with</div>
+
+                <button class="social-btn">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="Google"
+                        style="width: 20px;">
+                    Sign in with Google
+                </button>
+
+                <p style="text-align: center; margin-top: 2rem; color: var(--text-secondary); font-size: 0.95rem;">
+                    Don't have an account? <span class="link-text" onclick="switchView('signup-step1')">Create one
+                        now</span>
+                </p>
+            </div>
+
+            <div id="view-signup-step1" class="view-section">
+                <button class="step-back-btn" onclick="switchView('login')">
+                    <i class="fas fa-arrow-left"></i> Back to Login
+                </button>
+
+                <div class="auth-header">
+                    <h2 class="auth-title">Create Account</h2>
+                    <p class="auth-subtitle">Start your health journey today.</p>
+                </div>
+
+                <form onsubmit="handleSignupNext(event)">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <div class="input-group">
+                            <input type="text" class="auth-input" id="suFirst" placeholder="First Name">
+                            <span class="error-msg" id="suFirstError">Required</span>
+                        </div>
+                        <div class="input-group">
+                            <input type="text" class="auth-input" id="suLast" placeholder="Last Name">
+                            <span class="error-msg" id="suLastError">Required</span>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <input type="email" class="auth-input" id="suEmail" placeholder="Email Address">
+                        <span class="error-msg" id="suEmailError">Invalid email address</span>
+                    </div>
+
+                    <button type="submit" class="auth-btn-primary">
+                        Continue <i class="fas fa-arrow-right" style="margin-left: 8px;"></i>
+                    </button>
+                </form>
+
+                <div class="divider">or</div>
+
+                <button class="social-btn">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="Google"
+                        style="width: 20px;">
+                    Sign up with Google
+                </button>
+            </div>
+
+            <div id="view-signup-step2" class="view-section">
+                <button class="step-back-btn" onclick="switchView('signup-step1')">
+                    <i class="fas fa-arrow-left"></i> Back
+                </button>
+
+                <div class="auth-header">
+                    <h2 class="auth-title">Secure Profile</h2>
+                    <p class="auth-subtitle">Set up your login credentials.</p>
+                </div>
+
+                <form onsubmit="handleSignupSubmit(event)">
+                    <div class="input-group">
+                        <input type="text" class="auth-input" id="suUser" placeholder="Username">
+                        <span class="error-msg" id="suUserError">Min 3 characters</span>
+                    </div>
+
+                    <div class="input-group">
+                        <input type="password" class="auth-input" id="suPass" placeholder="Password (Min 6 chars)">
+                        <span class="error-msg" id="suPassError">Min 6 characters</span>
+                    </div>
+
+                    <div class="input-group">
+                        <input type="password" class="auth-input" id="suConfirm" placeholder="Confirm Password">
+                        <span class="error-msg" id="suConfirmError">Passwords must match</span>
+                    </div>
+
+                    <button type="submit" class="auth-btn-primary">Complete Registration</button>
+                </form>
+            </div>
+
+            <div id="view-forgot" class="view-section">
+                <button class="step-back-btn" onclick="switchView('login')">
+                    <i class="fas fa-arrow-left"></i> Back to Login
+                </button>
+
+                <div class="auth-header">
+                    <h2 class="auth-title">Reset Password</h2>
+                    <p class="auth-subtitle">Enter your email to receive a code.</p>
+                </div>
+
+                <form onsubmit="handleForgotRequest(event)">
+                    <div class="input-group">
+                        <input type="email" class="auth-input" id="forgotEmail" placeholder="Registered Email Address">
+                        <span class="error-msg" id="forgotEmailError">Please enter a valid email</span>
+                    </div>
+
+                    <button type="submit" class="auth-btn-primary">
+                        Send Code <i class="fas fa-paper-plane" style="margin-left: 8px;"></i>
+                    </button>
+                </form>
+            </div>
+
+            <div id="view-reset-final" class="view-section">
+                <div class="auth-header">
+                    <h2 class="auth-title">New Credentials</h2>
+                    <p class="auth-subtitle">Check your email for the code.</p>
+                </div>
+
+                <form onsubmit="handleFinalReset(event)">
+                    <div class="input-group">
+                        <input type="text" class="auth-input" id="resetOtp" placeholder="Enter 6-digit Code"
+                            maxlength="6" style="letter-spacing: 3px; text-align: center; font-weight:700;">
+                        <span class="error-msg" id="resetOtpError">Invalid Code</span>
+                    </div>
+
+                    <div class="divider"></div>
+
+                    <div class="input-group">
+                        <input type="password" class="auth-input" id="newPass" placeholder="New Password">
+                        <span class="error-msg" id="newPassError">Min 6 characters</span>
+                    </div>
+
+                    <div class="input-group">
+                        <input type="password" class="auth-input" id="confirmNewPass"
+                            placeholder="Confirm New Password">
+                        <span class="error-msg" id="confirmNewPassError">Passwords must match</span>
+                    </div>
+
+                    <button type="submit" class="auth-btn-primary">Update Password</button>
+                </form>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+
+        // Load saved theme and set correct icon on startup
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme) {
+                document.documentElement.setAttribute('data-theme', savedTheme);
+                updateThemeIcon(savedTheme);
+            }
+        });
+        // --- THEME TOGGLE LOGIC ---
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', newTheme);
+
+            // Toggle Icon
+            const icon = document.querySelector('.theme-toggle i');
+            if (newTheme === 'dark') {
+                icon.classList.remove('fa-moon');
+                icon.classList.add('fa-sun');
+            } else {
+                icon.classList.remove('fa-sun');
+                icon.classList.add('fa-moon');
+            }
+        }
+
+        // --- VIEW SWITCHING ---
+        function switchView(viewName) {
+            document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+            document.getElementById(`view-${viewName}`).classList.add('active');
+            clearErrors();
+        }
+
+        function clearErrors() {
+            document.querySelectorAll('.error-msg').forEach(el => el.classList.remove('show'));
+            document.querySelectorAll('.auth-input').forEach(el => el.classList.remove('error'));
+        }
+
+        function showError(inputId, msgId, show) {
+            const input = document.getElementById(inputId);
+            const msg = document.getElementById(msgId);
+            if (show) {
+                input.classList.add('error');
+                msg.classList.add('show');
+            } else {
+                input.classList.remove('error');
+                msg.classList.remove('show');
+            }
+            return !show;
+        }
+
+        // --- VALIDATION LOGIC ---
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const id = document.getElementById('loginId').value;
+            const pass = document.getElementById('loginPass').value;
+
+            let valid = true;
+            valid &= showError('loginId', 'loginIdError', id.length === 0);
+            valid &= showError('loginPass', 'loginPassError', pass.length === 0);
+
+            if (valid) {
+                const btn = e.target.querySelector('button[type="submit"]');
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying...';
+                setTimeout(() => {
+                    alert("Login Successful!");
+                    window.location.href = 'index.html';
+                }, 1000);
+            }
+        }
+
+        function handleSignupNext(e) {
+            e.preventDefault();
+            const first = document.getElementById('suFirst').value.trim();
+            const last = document.getElementById('suLast').value.trim();
+            const email = document.getElementById('suEmail').value.trim();
+
+            let valid = true;
+            valid = showError('suFirst', 'suFirstError', first.length === 0) && valid;
+            valid = showError('suLast', 'suLastError', last.length === 0) && valid;
+            valid = showError('suEmail', 'suEmailError', !emailRegex.test(email)) && valid;
+
+            if (valid) switchView('signup-step2');
+        }
+
+        function handleSignupSubmit(e) {
+            e.preventDefault();
+            const user = document.getElementById('suUser').value.trim();
+            const pass = document.getElementById('suPass').value;
+            const confirm = document.getElementById('suConfirm').value;
+
+            let valid = true;
+            valid = showError('suUser', 'suUserError', user.length < 3) && valid;
+            valid = showError('suPass', 'suPassError', pass.length < 6) && valid;
+            valid = showError('suConfirm', 'suConfirmError', (pass !== confirm || pass.length === 0)) && valid;
+
+            if (valid) alert("Account Created!");
+        }
+
+        // --- FORGOT PASSWORD HANDLERS ---
+        function handleForgotRequest(e) {
+            e.preventDefault();
+            const email = document.getElementById('forgotEmail').value;
+            if (showError('forgotEmail', 'forgotEmailError', !emailRegex.test(email))) {
+                alert(`Code sent to ${email}`);
+                switchView('reset-final');
+            }
+        }
+
+        function handleFinalReset(e) {
+            e.preventDefault();
+            const otp = document.getElementById('resetOtp').value;
+            const newPass = document.getElementById('newPass').value;
+            const confirm = document.getElementById('confirmNewPass').value;
+
+            let valid = true;
+            valid &= showError('resetOtp', 'resetOtpError', otp.length !== 6);
+            valid &= showError('newPass', 'newPassError', newPass.length < 6);
+            valid &= showError('confirmNewPass', 'confirmNewPassError', newPass !== confirm);
+
+            if (valid) {
+                alert("Password Updated!");
+                switchView('login');
+            }
+        }
+    </script>
+</body>
+
+</html>
