@@ -376,6 +376,52 @@ header.scrolled .lang-btn {
     padding: 0.5rem;
 }
 
+/* Separator line inside the menu */
+.mobile-lang-separator {
+    height: 1px;
+    background: var(--border-color);
+    margin: 1rem 0;
+    width: 100%;
+}
+
+/* Container for label and buttons */
+.mobile-lang-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 0 0.5rem;
+}
+
+.mobile-lang-label {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.mobile-lang-options {
+    display: flex;
+    gap: 10px;
+}
+
+/* Style the buttons */
+.mobile-lang-btn {
+    flex: 1; /* Make them equal width */
+    padding: 0.6rem;
+    background: var(--bg-body);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.mobile-lang-btn:hover {
+    background: var(--accent-primary);
+    color: white;
+    border-color: var(--accent-primary);
+}
+
 /* --- MOBILE RESPONSIVENESS --- */
 @media (max-width: 968px) {
 
@@ -420,4 +466,5 @@ header.scrolled .lang-btn {
         /* Reduced from 0.5rem 1.6rem */
         font-size: 0.85rem;
     }
+
 }
