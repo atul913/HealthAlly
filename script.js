@@ -100,7 +100,7 @@ const translations = {
 
 
         // Services Section
-        servicesHeroTitle: 'Our Comprehensive Services',
+        servicesHeroTitle: 'Our Unified Services',
         servicesHeroDesc: 'Explore the cutting-edge AI technologies we use to bring hospital-grade diagnostics and assistance directly to your device.',
         servicesChatbotTitle: 'AI Health Chatbot',
         servicesChatbotDesc: "Our NLP engine isn't just a basic script. It utilizes Large Language Models specifically fine-tuned on medical textbooks and triage protocols.",
@@ -245,7 +245,7 @@ const translations = {
 
 
         // Services Section
-        servicesHeroTitle: 'हमारी व्यापक सेवाएँ',
+        servicesHeroTitle: 'हमारी एकीकृत सेवाएँ',
         servicesHeroDesc: 'अत्याधुनिक एआई तकनीकों का अन्वेषण करें जिनका उपयोग हम आपके डिवाइस पर सीधे अस्पताल-श्रेणी के निदान लाने के लिए करते हैं।',
         servicesChatbotTitle: 'एआई हेल्थ चैटबॉट',
         servicesChatbotDesc: 'हमारा एनएलपी इंजन केवल एक साधारण स्क्रिप्ट नहीं है। यह चिकित्सा पाठ्यपुस्तकों पर फाइन-ट्यून किए गए मॉडल का उपयोग करता है।',
@@ -407,4 +407,5 @@ mobileBtn.addEventListener('click', () => {
     } else {
         mobileBtn.textContent = '☰'; // Change back to 3 lines
     }
+
 });
