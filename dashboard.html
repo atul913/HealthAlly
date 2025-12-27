@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account Settings - MedAI</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        @font-face {
+            font-family: 'fkGroteskNeue';
+            src: url('https://assets.perplexity.ai/fonts/FKGroteskNeue-Regular.woff2') format('woff2');
+            font-weight: 400;
+            font-style: normal;
+        }
+
+        :root {
+            --bg-body: #ffffff;
+            --bg-sidebar: #f8fafc;
+            --bg-card: #ffffff;
+            --bg-input: #ffffff;
+            --border: #e2e8f0;
+            --text-main: #1e293b;
+            --text-sub: #434446;
+            --text-light: #94a3b8;
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --danger: #ef4444;
+            --hover-bg: #f1f5f9;
+            --sidebar-active: #eff6ff;
+        }
+
+        [data-theme="dark"] {
+            --bg-body: #0f172a;
+            --bg-sidebar: #0f172a;
+            --bg-card: #1e293b;
+            --bg-input: #0f172a;
+            --border: #334155;
+            --text-main: #f1f5f9;
+            --text-sub: #94a3b8;
+            --text-light: #64748b;
+            --hover-bg: #334155;
+            --sidebar-active: rgba(59, 130, 246, 0.15);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: "fkGroteskNeue", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            font-weight: 400;
+        }
+
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            min-height: 100vh;
+            transition: background-color 0.2s, color 0.2s;
+        }
+
+        .page-container {
+            display: flex;
+            min-height: 100vh;
+            justify-content: space-between;
+        }
+
+        /* Hamburger menu button */
+        .hamburger {
+            display: none;
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+            width: 40px;
+            height: 40px;
+            background-color: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.3s;
+        }
+
+        .hamburger:hover {
+            background-color: var(--hover-bg);
+        }
+
+        .hamburger span {
+            display: block;
+            width: 20px;
+            height: 2px;
+            background-color: var(--text-main);
+            transition: all 0.3s;
+            border-radius: 2px;
+        }
+
+        /* Hamburger animation to cross */
+        .hamburger.active span:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(6px, -6px);
+        }
+
+        /* Overlay for mobile */
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 99;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .overlay.active {
+            opacity: 1;
+        }
+
+        /* Back button area */
+        .back-section {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 180px;
+            padding: 24px 16px;
+            background-color: var(--bg-sidebar);
+            border-right: 1px solid var(--border);
+            z-index: 10;
+        }
+
+        .back-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-sub);
+            text-decoration: none;
+            font-size: 15px;
+            padding: 8px;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        .back-btn:hover {
+            background-color: var(--hover-bg);
+            color: var(--text-main);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 180px;
+            background-color: var(--bg-sidebar);
+            border-right: 1px solid var(--border);
+            padding: 80px 16px 24px 16px;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .sidebar-section {
+            margin-bottom: 32px;
+        }
+
+        .sidebar-title {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-light);
+            margin-bottom: 12px;
+            padding-left: 12px;
+        }
+
+        .sidebar-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .menu-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 12px;
+            color: var(--text-sub);
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.15s;
+        }
+
+        .menu-link i {
+            width: 16px;
+            font-size: 14px;
+        }
+
+        .menu-link:hover {
+            background-color: var(--hover-bg);
+            color: var(--text-main);
+        }
+
+        .menu-link.active {
+            background-color: var(--sidebar-active);
+        }
+
+        /* Main content */
+        .main-content {
+            flex: 1;
+            margin-left: 180px;
+            padding: 40px 80px;
+            max-width: 900px;
+        }
+
+        .page-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 32px;
+            color: var(--text-main);
+        }
+
+        /* Setting items */
+        .setting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .setting-item:last-child {
+            border-bottom: none;
+        }
+
+        .setting-left {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .setting-info {
+            flex: 1;
+        }
+
+        .setting-label {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-main);
+            margin-bottom: 2px;
+            display: block;
+        }
+
+        .setting-value {
+            font-size: 13px;
+            color: var(--text-sub);
+        }
+
+        /* Avatar */
+        .avatar-circle {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 400;
+            cursor: pointer;
+            transition: all 0.15s;
+            text-decoration: none;
+            display: inline-block;
+            border: 1px solid var(--border);
+            background-color: var(--bg-card);
+            color: var(--text-sub);
+            white-space: nowrap;
+        }
+
+        .btn:hover {
+            background-color: var(--hover-bg);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+        }
+
+        /* Subscription card */
+        .subscription-card {
+            background-color: var(--hover-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 20px;
+            margin: 24px 0;
+        }
+
+        .subscription-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .subscription-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-main);
+            margin-bottom: 4px;
+        }
+
+        .subscription-desc {
+            font-size: 13px;
+            color: var(--text-sub);
+        }
+
+        /* Section headers */
+        .section-header {
+            font-size: 16px;
+            font-weight: 600;
+            margin: 40px 0 24px 0;
+            color: var(--text-main);
+        }
+
+        .section-header:first-child {
+            margin-top: 0;
+        }
+
+        /* Form input */
+        .form-input {
+            width: 100%;
+            max-width: 400px;
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 14px;
+            background-color: var(--bg-input);
+            color: var(--text-main);
+            outline: none;
+            transition: border-color 0.15s;
+        }
+
+        .form-input:focus {
+            border-color: var(--primary);
+        }
+
+        /* Toggle switch */
+        .toggle-switch {
+            position: relative;
+            width: 44px;
+            height: 24px;
+            background-color: var(--border);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .toggle-switch.active {
+            background-color: var(--primary);
+        }
+
+        .toggle-slider {
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 20px;
+            height: 20px;
+            background-color: white;
+            border-radius: 50%;
+            transition: transform 0.2s;
+        }
+
+        .toggle-switch.active .toggle-slider {
+            transform: translateX(20px);
+        }
+
+        /* Dropdown */
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-btn {
+            min-width: 80px;
+            text-align: left;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Save button container */
+        .save-container {
+            margin-top: 32px;
+            text-align: right;
+        }
+
+        @media (max-width: 968px) {
+            .hamburger {
+                display: flex;
+            }
+
+            .back-section {
+                display: none;
+            }
+
+            .sidebar {
+                position: fixed;
+                left: -180px;
+                top: 0;
+                height: 100vh;
+                z-index: 100;
+                transition: left 0.3s ease;
+                padding-top: 80px;
+            }
+
+            .sidebar.active {
+                left: 0;
+            }
+
+            .overlay {
+                display: block;
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 80px 24px 40px 24px;
+            }
+        }
+    </style>
+</head>
+
+<body data-theme="light">
+    <!-- Hamburger Menu Button -->
+    <button class="hamburger" id="hamburger">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+
+    <!-- Overlay -->
+    <div class="overlay" id="overlay"></div>
+
+    <div class="page-container">
+        <!-- Back Button Section -->
+        <div class="back-section">
+            <a href="#" class="back-btn">
+                <i class="fas fa-chevron-left"></i>
+                <span>Back</span>
+            </a>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-section">
+                <div class="sidebar-title">Account</div>
+                <div class="sidebar-menu">
+                    <a href="#account" class="menu-link active" data-page="account">
+                        <i class="fas fa-user"></i>
+                        <span>Account</span>
+                    </a>
+                    <a href="#preferences" class="menu-link" data-page="preferences">
+                        <i class="fas fa-sliders-h"></i>
+                        <span>Preferences</span>
+                    </a>
+                    <a href="#personalization" class="menu-link" data-page="personalization">
+                        <i class="fas fa-palette"></i>
+                        <span>Personalization</span>
+                    </a>
+                    <a href="#assistant" class="menu-link" data-page="assistant">
+                        <i class="fas fa-robot"></i>
+                        <span>Assistant</span>
+                    </a>
+                    <a href="#shortcuts" class="menu-link" data-page="shortcuts">
+                        <i class="fas fa-keyboard"></i>
+                        <span>Shortcuts</span>
+                    </a>
+                    <a href="#tasks" class="menu-link" data-page="tasks">
+                        <i class="fas fa-tasks"></i>
+                        <span>Tasks</span>
+                    </a>
+                    <a href="#notifications" class="menu-link" data-page="notifications">
+                        <i class="fas fa-bell"></i>
+                        <span>Notifications</span>
+                    </a>
+                    <a href="#connectors" class="menu-link" data-page="connectors">
+                        <i class="fas fa-plug"></i>
+                        <span>Connectors</span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <div class="sidebar-title">Workspace</div>
+                <div class="sidebar-menu">
+                    <a href="#api" class="menu-link" data-page="api">
+                        <i class="fas fa-code"></i>
+                        <span>API</span>
+                    </a>
+                    <a href="#enterprise" class="menu-link" data-page="enterprise">
+                        <i class="fas fa-building"></i>
+                        <span>Enterprise</span>
+                        <i class="fas fa-external-link-alt" style="font-size: 10px; margin-left: auto;"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Account Page -->
+            <div id="account-page" class="content-page">
+                <h1 class="page-title">Account</h1>
+
+                <div class="setting-item">
+                    <div class="setting-left">
+                        <div class="avatar-circle">A</div>
+                        <div class="setting-info">
+                            <div class="setting-label">{{current_user.first_name}} {{current_user.last_name}}</div>
+                            <div class="setting-value">{{current_user.username}}</div>
+                        </div>
+                    </div>
+                    <label for="avatar-upload" class="btn">Change avatar</label>
+                    <input type="file" id="avatar-upload" style="display: none;">
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <label class="setting-label">Full Name</label>
+                        <div class="setting-value">{{current_user.first_name}} {{current_user.last_name}}</div>
+                    </div>
+                    <button class="btn">Change full name</button>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <label class="setting-label">Username</label>
+                        <div class="setting-value">{{current_user.username}}</div>
+                    </div>
+                    <button class="btn">Change username</button>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <label class="setting-label">Email</label>
+                        <div class="setting-value">{{current_user.email}}</div>
+                    </div>
+                </div>
+
+                <h2 class="section-header">Your Subscription</h2>
+
+                <div class="subscription-card">
+                    <div class="subscription-header">
+                        <div>
+                            <div class="subscription-title">Unlock the most powerful search experience with Perplexity
+                                Pro</div>
+                            <div class="subscription-desc">Get the most out of Perplexity with Pro. <a href="#"
+                                    style="color: var(--primary);">Learn more</a></div>
+                        </div>
+                        <button class="btn btn-primary" disabled>Upgrade plan</button>
+                    </div>
+                </div>
+
+                <h2 class="section-header">System</h2>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <label class="setting-label">Support</label>
+                    </div>
+                    <button class="btn">Contact</button>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <label class="setting-label">You are signed in as atulagrawa96010</label>
+                    </div>
+                    <button class="btn" onclick="window.location.href='/logout'">Sign out</button>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <label class="setting-label">Sign out of all sessions</label>
+                        <div class="setting-value">Devices or browsers where you are signed in</div>
+                    </div>
+                    <button class="btn">Sign out of all sessions</button>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <label class="setting-label">Delete account</label>
+                        <div class="setting-value">Permanently delete your account and data</div>
+                    </div>
+                    <button class="btn">Learn more</button>
+                </div>
+            </div>
+
+            <!-- Preferences Page -->
+            <div id="preferences-page" class="content-page" style="display: none;">
+                <h1 class="page-title">Preferences</h1>
+
+                <h2 class="section-header" style="margin-top: 0;">Appearance</h2>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <label class="setting-label">Appearance</label>
+                        <div class="setting-value">How Perplexity looks on your device</div>
+                    </div>
+                    <div class="dropdown">
+                        <button class="btn dropdown-btn" id="theme-btn">
+                            <span id="theme-text">Light</span>
+                            <i class="fas fa-sun" id="theme-icon"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <label class="setting-label">Language</label>
+                        <div class="setting-value">The language used in the user interface</div>
+                    </div>
+                    <button class="btn dropdown-btn">
+                        <span>Default</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <label class="setting-label">Preferred response language</label>
+                        <div class="setting-value">The language used for AI responses</div>
+                    </div>
+                    <button class="btn dropdown-btn">
+                        <span>Automatic (detect input)</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <label class="setting-label">Autosuggest</label>
+                        <div class="setting-value">Enable dropdown and tab-complete suggestions while typing a query
+                        </div>
+                    </div>
+                    <div class="toggle-switch active" onclick="this.classList.toggle('active')">
+                        <div class="toggle-slider"></div>
+                    </div>
+                </div>
+
+                <h2 class="section-header">Artificial Intelligence</h2>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <label class="setting-label">Model</label>
+                    </div>
+                    <button class="btn">Upgrade to choose</button>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <label class="setting-label">Image generation model</label>
+                    </div>
+                    <button class="btn">Upgrade to select</button>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <label class="setting-label">Video generation model</label>
+                    </div>
+                    <button class="btn">Upgrade to Max</button>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <label class="setting-label">AI data retention</label>
+                        <div class="setting-value">AI Data Retention allows Perplexity to use your searches to improve
+                            AI models. Turn this setting off if you wish to exclude your data from this process.</div>
+                    </div>
+                    <div class="toggle-switch active" onclick="this.classList.toggle('active')">
+                        <div class="toggle-slider"></div>
+                    </div>
+                </div>
+
+                <h2 class="section-header">Sidebar</h2>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <label class="setting-label">Customize sidebar items</label>
+                    </div>
+                    <button class="btn">Customize</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Hamburger menu toggle
+        const hamburger = document.getElementById('hamburger');
+        const sidebar = document.querySelector('.sidebar');
+        const overlay = document.getElementById('overlay');
+
+        function toggleMenu() {
+            hamburger.classList.toggle('active');
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+            document.body.style.overflow = sidebar.classList.contains('active') ? 'hidden' : '';
+        }
+
+        hamburger.addEventListener('click', toggleMenu);
+        overlay.addEventListener('click', toggleMenu);
+
+        // Page navigation
+        document.querySelectorAll('.menu-link').forEach(link => {
+            link.addEventListener('click', function (e) {
+                e.preventDefault();
+
+                // Update active state
+                document.querySelectorAll('.menu-link').forEach(l => l.classList.remove('active'));
+                this.classList.add('active');
+
+                // Show corresponding page
+                const page = this.dataset.page;
+                document.querySelectorAll('.content-page').forEach(p => p.style.display = 'none');
+                const targetPage = document.getElementById(page + '-page');
+                if (targetPage) {
+                    targetPage.style.display = 'block';
+                }
+
+                // Close menu on mobile after selection
+                if (window.innerWidth <= 968) {
+                    toggleMenu();
+                }
+            });
+        });
+
+        // Theme toggle
+        const themeBtn = document.getElementById('theme-btn');
+        const themeText = document.getElementById('theme-text');
+        const themeIcon = document.getElementById('theme-icon');
+        const body = document.body;
+
+        themeBtn.addEventListener('click', function () {
+            const currentTheme = body.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+
+            body.setAttribute('data-theme', newTheme);
+
+            if (newTheme === 'dark') {
+                themeText.textContent = 'Dark';
+                themeIcon.className = 'fas fa-moon';
+            } else {
+                themeText.textContent = 'Light';
+                themeIcon.className = 'fas fa-sun';
+            }
+        });
+
+        // Avatar upload
+        document.getElementById('avatar-upload').addEventListener('change', function (event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            // Preview the image
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                document.querySelectorAll('.avatar-circle').forEach(avatar => {
+                    avatar.innerHTML = `<img src="${e.target.result}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
+                });
+            };
+            reader.readAsDataURL(file);
+        });
+    </script>
+</body>
+
+</html>
